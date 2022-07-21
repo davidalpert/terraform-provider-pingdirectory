@@ -3,9 +3,6 @@ PROJECTNAME=terraform-provider-pingdirectory
 # Make is verbose in Linux. Make it silent.
 MAKEFLAGS += --silent
 
-# go versioning flags
-VERSION=$(shell sbot get version)
-
 GOOS=$(shell go env GOOS)
 GOARCH=$(shell go env GOARCH)
 GOPATH=$(shell go env GOPATH)
@@ -18,24 +15,16 @@ default: help
 .PHONY: cit
 cit: clean build test ## clean build and test
 
-.PHONY: version
-version: ## show current version
-	echo ${VERSION}
-
 .PHONY: clean
 clean: ## clean build output
 	rm -rf ./bin
-
-.PHONY: ./internal/version/detail.go
-./internal/version/detail.go:
-	$(MAKE) gen
 
 .PHONY: gen
 gen: ## invoke go generate
 	@CGO_ENABLED=1 go generate ./...
 
 .PHONY: build
-build: clean ./internal/version/detail.go ## build for current platform
+build: clean gen ## build for current platform
 	mkdir -p ./bin
 	go build -o ./bin/terraform-provider-pingdirectory
 
@@ -53,7 +42,7 @@ test-action-push: ## Test github actions with event 'push'
 .PHONY: help
 help: Makefile
 	@echo
-	@echo " ${PROJECTNAME} ${VERSION} - available targets:"
+	@echo " ${PROJECTNAME} - available targets:"
 	@echo
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 	@echo
