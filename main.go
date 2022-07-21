@@ -19,6 +19,9 @@ import (
 // can be customized.
 //go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
 
+// Run the version gen tool, which builds a struct in an internal package to expose version details
+//go:generate go run ./tools/version_gen.go terraform-provider-pingdirectory
+
 var (
 	// these will be set by the goreleaser configuration
 	// to appropriate values for the compiled binary
