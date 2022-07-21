@@ -3,7 +3,9 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-provider-pingdirectory/internal/provider"
@@ -28,14 +30,25 @@ var (
 	version string = "dev"
 
 	// goreleaser can also pass the specific commit if you want
-	// commit  string = ""
+	commit string = ""
 )
 
 func main() {
 	var debug bool
+	var showVersion bool
 
 	flag.BoolVar(&debug, "debug", false, "set to true to run the provider with support for debuggers like delve")
+	flag.BoolVar(&showVersion, "version", false, "show the plugin version")
 	flag.Parse()
+
+	if showVersion {
+		v := version
+		if commit != "" {
+			v += "+" + commit
+		}
+		fmt.Printf("terraform-provider-ping %s\n", v)
+		os.Exit(0)
+	}
 
 	opts := providerserver.ServeOpts{
 		// TODO: Update this string with the published name of your provider.
