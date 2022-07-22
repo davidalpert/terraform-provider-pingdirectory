@@ -23,4 +23,6 @@ provider "scaffolding" {
 
 ### Optional
 
-- `example` (String) Example provider attribute
+- `sync_base_url` (String) DataSync BaseURL (e.g. https://datasync.my.org:8443)
+- `sync_dn_pass` (String) DataSync auth pass
+- `sync_dn_user` (String) DataSync auth dn

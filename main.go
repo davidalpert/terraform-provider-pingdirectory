@@ -7,8 +7,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/davidalpert/terraform-provider-pingdirectory/internal/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
-	"github.com/hashicorp/terraform-provider-pingdirectory/internal/provider"
 )
 
 // Run "go generate" to format example terraform files and generate the docs for the registry/website
@@ -43,15 +43,17 @@ func main() {
 		if commit != "" {
 			v += "+" + commit
 		}
-		fmt.Printf("terraform-provider-ping %s\n", v)
+		fmt.Printf("terraform-provider-pingdirectory %s\n", v)
 		os.Exit(0)
 	}
 
 	opts := providerserver.ServeOpts{
 		// TODO: Update this string with the published name of your provider.
-		Address: "registry.terraform.io/hashicorp/scaffolding",
+		Address: "registry.terraform.io/davidalpert/pingdirectory",
 		Debug:   debug,
 	}
+
+	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
 	err := providerserver.Serve(context.Background(), provider.New(version), opts)
 

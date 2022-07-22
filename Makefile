@@ -27,12 +27,14 @@ gen: ## invoke go generate
 build: clean gen ## build for current platform
 	mkdir -p ./bin
 	go build -o ./bin/terraform-provider-pingdirectory
+	go build -o ./bin/ping-api-client pkg/cmd/ping-api-client/main.go
 
 .PHONY: test
 test: testacc ## Run all tests (unit + acceptance)
 
 .PHONY: testacc
 testacc: ## Run acceptance tests
+	#TF_ACC=1 PING_SYNC_BASE_URL=https://lv1stgpingsync01.dm.nfl.com:8443 PING_SYNC_DN_NAME="${STG_PING_DIRECTORY_MANAGER_USERNAME}" PING_SYNC_DN_PASS="${STG_PING_DIRECTORY_MANAGER_PASSWORD}" go test ./... -v $(TESTARGS) -timeout 120m
 	TF_ACC=1 go test ./... -v $(TESTARGS) -timeout 120m
 
 test-action-push: ## Test github actions with event 'push'
