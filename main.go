@@ -50,7 +50,7 @@ func main() {
 	opts := providerserver.ServeOpts{
 		// TODO: Update this string with the published name of your provider.
 		Address: "registry.terraform.io/davidalpert/pingdirectory",
-		Debug:   debug,
+		Debug: debug,
 	}
 
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
