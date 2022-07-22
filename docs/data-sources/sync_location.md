@@ -19,7 +19,7 @@ Example data source
 
 - `id` (String) Sync Location uri
 
-### Optional
+### Read-Only
 
 - `description` (String) Sync Location description
 - `name` (String) Sync Location identifier

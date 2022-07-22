@@ -16,7 +16,7 @@ func TestAccExampleDataSource(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.pingdirectory_sync_location.test", "id", "aws-east-1"),
 					resource.TestCheckResourceAttr("data.pingdirectory_sync_location.test", "name", "aws-east-1"),
-					//resource.TestCheckResourceAttr("data.pingdirectory_sync_location.test", "description", "TBD"),
+					resource.TestCheckResourceAttr("data.pingdirectory_sync_location.test", "description", "AWS Region 1"),
 				),
 			},
 		},

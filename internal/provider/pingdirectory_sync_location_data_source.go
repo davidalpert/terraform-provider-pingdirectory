@@ -3,10 +3,12 @@ package provider
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"regexp"
 	"strings"
 )
 
@@ -26,15 +28,22 @@ func (t syncLocationDataSourceType) GetSchema(ctx context.Context) (tfsdk.Schema
 				Required:            true,
 				Type:                types.StringType,
 				MarkdownDescription: "Sync Location uri",
+				Validators: []tfsdk.AttributeValidator{
+					// These are example validators from terraform-plugin-framework-validators
+					stringvalidator.RegexMatches(
+						regexp.MustCompile(`^[a-z0-9-]+$`),
+						"must contain only lowercase characters",
+					),
+				},
 			},
 			"name": {
-				Optional:            true,
+				Computed:            true,
 				MarkdownDescription: "Sync Location identifier",
 				Type:                types.StringType,
 			},
 			"description": {
 				MarkdownDescription: "Sync Location description",
-				Optional:            true,
+				Computed:            true,
 				Type:                types.StringType,
 			},
 		},
@@ -69,7 +78,7 @@ func (d syncLocationDataSource) Read(ctx context.Context, req tfsdk.ReadDataSour
 		return
 	}
 
-	tflog.Trace(ctx, "Read Data Source", map[string]interface{}{"resource": "Location", "id": data.ID.Value})
+	tflog.Debug(ctx, "Read Data Source", map[string]interface{}{"resource": "Location", "id": data.ID.Value})
 
 	l, _, err := d.provider.client.DataSync.LocationsGet(ctx, data.ID.Value)
 	if err != nil {
@@ -80,10 +89,10 @@ func (d syncLocationDataSource) Read(ctx context.Context, req tfsdk.ReadDataSour
 	// For the purposes of this example code, hardcoding a response value to
 	// save into the Terraform state.
 	data.ID = types.String{Value: strings.ToLower(l.Name)}
-	data.Name = types.String{Value: l.Name}
+	data.Name = types.String{Value: strings.ToLower(l.Name)}
 	data.Description = types.String{Value: l.Description}
 
-	tflog.Info(ctx, "Read Data Source Complete", map[string]interface{}{"resource": "Location", "id": data.ID.Value, "name": data.Name.Value, "description": data.Description.Value})
+	tflog.Debug(ctx, "Read Data Source Complete", map[string]interface{}{"resource": "Location", "id": data.ID.Value, "name": data.Name.Value, "description": data.Description.Value})
 
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)

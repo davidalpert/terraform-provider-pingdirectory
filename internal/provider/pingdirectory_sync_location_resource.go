@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/davidalpert/terraform-provider-pingdirectory/pkg/ping/directory/apiclient/v1"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"regexp"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -35,9 +37,16 @@ func (t syncLocationResourceType) GetSchema(ctx context.Context) (tfsdk.Schema, 
 				Type: types.StringType,
 			},
 			"name": {
-				Required:            true,
-				MarkdownDescription: "Sync Location name",
 				Type:                types.StringType,
+				MarkdownDescription: "Sync Location name",
+				Required:            true,
+				Validators: []tfsdk.AttributeValidator{
+					// These are example validators from terraform-plugin-framework-validators
+					stringvalidator.RegexMatches(
+						regexp.MustCompile(`^[a-z0-9-]+$`),
+						"must contain only lowercase characters",
+					),
+				},
 			},
 			"description": {
 				MarkdownDescription: "Sync Location description",
@@ -81,7 +90,7 @@ func (r syncLocationResource) Create(ctx context.Context, req tfsdk.CreateResour
 		l.Description = data.Description.Value
 	}
 
-	tflog.Info(ctx, "Create", map[string]interface{}{"resource": "Location", "name": data.Name.Value, "value": l})
+	tflog.Debug(ctx, "Create", map[string]interface{}{"resource": "Location", "name": data.Name.Value, "value": l})
 
 	_, err := r.provider.client.DataSync.LocationsCreate(ctx, l)
 	if err != nil {
@@ -96,7 +105,7 @@ func (r syncLocationResource) Create(ctx context.Context, req tfsdk.CreateResour
 	// write logs using the tflog package
 	// see https://pkg.go.dev/github.com/hashicorp/terraform-plugin-log/tflog
 	// for more information
-	tflog.Info(ctx, "created a location", map[string]interface{}{"id": data.ID, "name": data.Name, "description": data.Description})
+	tflog.Debug(ctx, "created a location", map[string]interface{}{"id": data.ID, "name": data.Name, "description": data.Description})
 
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -112,7 +121,7 @@ func (r syncLocationResource) Read(ctx context.Context, req tfsdk.ReadResourceRe
 		return
 	}
 
-	tflog.Info(ctx, "Read", map[string]interface{}{"resource": "Location", "id": data.ID.Value})
+	tflog.Debug(ctx, "Read", map[string]interface{}{"resource": "Location", "id": data.ID.Value})
 
 	l, _, err := r.provider.client.DataSync.LocationsGet(ctx, strings.ToLower(data.ID.Value))
 	if err != nil {
@@ -120,10 +129,10 @@ func (r syncLocationResource) Read(ctx context.Context, req tfsdk.ReadResourceRe
 		return
 	}
 
-	data.Name = types.String{Value: l.Name}
+	data.Name = types.String{Value: strings.ToLower(l.Name)}
 	data.Description = types.String{Value: l.Description}
 
-	tflog.Info(ctx, "Read Result", map[string]interface{}{"resource": "Location", "id": data.ID.Value, "name": data.Name.Value, "description": data.Description.Value})
+	tflog.Debug(ctx, "Read Result", map[string]interface{}{"resource": "Location", "id": data.ID.Value, "name": data.Name.Value, "description": data.Description.Value})
 
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -144,7 +153,7 @@ func (r syncLocationResource) Update(ctx context.Context, req tfsdk.UpdateResour
 		l.Description = data.Description.Value
 	}
 
-	tflog.Info(ctx, "Update", map[string]interface{}{"resource": "Location", "id": data.ID.Value, "value": l})
+	tflog.Debug(ctx, "Update", map[string]interface{}{"resource": "Location", "id": data.ID.Value, "value": l})
 
 	_, err := r.provider.client.DataSync.LocationUpdate(ctx, l)
 	if err != nil {
@@ -166,7 +175,7 @@ func (r syncLocationResource) Delete(ctx context.Context, req tfsdk.DeleteResour
 		return
 	}
 
-	tflog.Info(ctx, "Delete", map[string]interface{}{"resource": "Location", "id": data.ID.Value})
+	tflog.Debug(ctx, "Delete", map[string]interface{}{"resource": "Location", "id": data.ID.Value})
 
 	_, err := r.provider.client.DataSync.LocationDeleteByName(ctx, data.Name.Value)
 	if err != nil {
