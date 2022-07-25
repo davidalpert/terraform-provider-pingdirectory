@@ -5,7 +5,7 @@ go 1.17
 //replace github.com/davidalpert/go-printers => ../go-printers
 
 require (
-	github.com/davidalpert/go-printers v0.2.0
+	github.com/davidalpert/go-printers v0.3.0
 	github.com/hashicorp/terraform-plugin-docs v0.13.0
 	github.com/hashicorp/terraform-plugin-framework v0.10.0
 	github.com/hashicorp/terraform-plugin-framework-validators v0.4.0
