@@ -7,10 +7,10 @@ go 1.17
 require (
 	github.com/davidalpert/go-printers v0.2.0
 	github.com/hashicorp/terraform-plugin-docs v0.13.0
-	github.com/hashicorp/terraform-plugin-framework v0.10.0
+	github.com/hashicorp/terraform-plugin-framework v0.11.0
 	github.com/hashicorp/terraform-plugin-framework-validators v0.4.0
-	github.com/hashicorp/terraform-plugin-go v0.12.0
-	github.com/hashicorp/terraform-plugin-log v0.6.0
+	github.com/hashicorp/terraform-plugin-go v0.13.0
+	github.com/hashicorp/terraform-plugin-log v0.7.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.19.0
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/spf13/cobra v1.5.0
